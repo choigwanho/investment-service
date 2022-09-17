@@ -24,14 +24,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # registration
     'django.contrib.sites',
+    # allauth
     'allauth',
     'allauth.account',
+    # rest_auth
+    'rest_auth',
     'rest_auth.registration',
+    # DRF
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
-
+    # my app
     'investment',
 ]
 
