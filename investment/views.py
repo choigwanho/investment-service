@@ -38,7 +38,7 @@ def myAssetView(request):
 
 
 @api_view(['POST'])
-def transferAmount1(request,pk):g
+def transferAmount1(request,pk):
     '''
     투자금 입금 Phase 1 API
     '''
