@@ -12,8 +12,8 @@ class Account(models.Model):
     account_name = models.CharField(max_length=50)
     # 증권사
     brokerage = models.CharField(max_length=50)
-    # 계좌 총 자산
-    total_amount = models.IntegerField(default=0)
+    # 투자금
+    invest_amount = models.IntegerField(default=0)
     # 사용자 이름
     user = models.ForeignKey(get_user_model(), related_name='accounts', on_delete=models.CASCADE)
 
@@ -44,15 +44,14 @@ class AssetGroup(models.Model):
         return f'{self.isin}'
 
 
-
 class Asset(models.Model):
     """
     자산 정보 테이블
     """
     # 계좌 번호
-    account_id = models.ForeignKey('Account', related_name='assets', on_delete=models.CASCADE)
+    account = models.ForeignKey('Account', related_name='assets', on_delete=models.CASCADE)
     # 보유 종목 ISIN
-    group_id = models.ForeignKey('AssetGroup', related_name='assets', on_delete=models.CASCADE)
+    group = models.ForeignKey('AssetGroup', on_delete=models.CASCADE)
     # 종목 현재가
     current_price = models.IntegerField(default=0)
     # 종목 보유 수량

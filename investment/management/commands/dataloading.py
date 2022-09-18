@@ -37,7 +37,8 @@ class Command(BaseCommand):
             - asset_group_info_set.xlsx 데이터 저장
         '''
         for i in range(len(name_list)):
-            if AssetGroup.objects.get(isin=isin_list[i]):
+            assetGroup = AssetGroup.objects.filter(isin=isin_list[i])
+            if assetGroup:
                 continue
             else:
                 AssetGroup(asset_name=name_list[i]
@@ -90,8 +91,10 @@ class Command(BaseCommand):
         '''
         user_name_set = list(set(user_name_list))
         password = 'pbkdf2_sha256$260000$BAG0oHkWNYZqurszaCLvMT$zZjijq9PrNCJMac8kYHXJQN/6k0KndAeVO/UnIG20Xk='  # 0000
+
+        # 사용자 이름을 username(unique) 값으로 사용하기 때문에 중복 제거
         for i in range(len(user_name_set)):
-            user = get_user_model().objects.get(username=user_name_set[i])
+            user = get_user_model().objects.filter(username=user_name_set[i])
             if user:
                 continue
             else:
@@ -118,7 +121,7 @@ class Command(BaseCommand):
             - asset_basic_info_set.xlsx에서 total_amount 참조
         '''
         for i in range(len(user_name_list)):
-            auth_user = get_user_model().objects.filter(username=user_name_list[i])
+            user = get_user_model().objects.filter(username=user_name_list[i])
             total_amount = 0
 
             for j in range(len(basic_account_number_list)):
@@ -133,7 +136,7 @@ class Command(BaseCommand):
                         , account_name=account_name_list[i]
                         , brokerage=brokerage_list[i]
                         , total_amount=total_amount
-                        , user=auth_user[0]).save()
+                        , user=user[0]).save()
         '''
         # 4. Asset 테이블
             - Account에서 id 참조 
@@ -143,11 +146,11 @@ class Command(BaseCommand):
             account = Account.objects.get(account_number=asset_account_number_list[i])
             assetGroup = AssetGroup.objects.get(isin=asset_isin_list[i])
 
-            asset = Asset.objects.filter(account_id=account.id, group_id=assetGroup.id)
+            asset = Asset.objects.filter(account=account, group=assetGroup)
             if asset.exists():
                 continue
             else:
-                Asset(account_id=account
-                      , group_id=assetGroup
+                Asset(account=account
+                      , group=assetGroup
                       , current_price=current_price_list[i]
                       , quantity=quantity_list[i]).save()
