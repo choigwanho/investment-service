@@ -32,11 +32,12 @@ class Command(BaseCommand):
             group_list.append(cell.value)
 
         '''
-        # 1. 그룹 테이블 저장, id 생성   
+        # 1. AseetGroup 테이블
+            - 그룹 테이블 저장
+            - asset_group_info_set.xlsx 데이터 저장
         '''
         for i in range(len(name_list)):
-            assetGroup = AssetGroup.objects.filter(isin=isin_list[i])
-            if assetGroup:
+            if AssetGroup.objects.get(isin=isin_list[i]):
                 continue
             else:
                 AssetGroup(asset_name=name_list[i]
@@ -83,18 +84,20 @@ class Command(BaseCommand):
         for cell in quantity_col[1:]:
             quantity_list.append(cell.value)
         '''
-        # 2. 사용자 이름으로 user table에 입력
+        # 2. User 테이블
+            - asset_asset_info_set.xlsx의 사용자 이름으로 저장
+            - 비밀번호 0000으로 임시 저장 
         '''
         user_name_set = list(set(user_name_list))
         password = 'pbkdf2_sha256$260000$BAG0oHkWNYZqurszaCLvMT$zZjijq9PrNCJMac8kYHXJQN/6k0KndAeVO/UnIG20Xk='  # 0000
         for i in range(len(user_name_set)):
-            auth_user = get_user_model().objects.filter(username=user_name_set[i])
-            if auth_user.exists():
+            user = get_user_model().objects.get(username=user_name_set[i])
+            if user:
                 continue
             else:
                 get_user_model()(username=user_name_set[i]
                                  , password=password).save()
-        '''
+
         account_basic_wb = load_workbook('investment/data_files/account_basic_info_set.xlsx')
         account_basic_ws = account_basic_wb.active
 
@@ -110,22 +113,41 @@ class Command(BaseCommand):
         for cell in total_amount_col[1:]:
             total_amount_list.append(cell.value)
         '''
-        # 3. 테이블에 입력할 때 생긴 id를 가져와서 계좌 테이블에 참조
+        # 3. Account 테이블
+            - get_user_model()에서 id 참조
+            - asset_basic_info_set.xlsx에서 total_amount 참조
         '''
-        for i in range(len(name_list)):
-            Account(account_number=basic_account_number_list[i]
-                    , account_name=account_name_list[i]
-                    , brokerage=brokerage_list[i]
-                    , total_amount=total_amount_list[i]
-                    , user=).save()
-        '''
-        # 4. 계좌 id, 그룹 id 참조하여 자산 테이블 업데이트
-        '''
-        for i in range(len(name_list)):
-            Asset(account_id=asset_account_number_list[i]
-                , group_id=account_name_list[i]
-                , current_price=brokerage_list[i]
-                , quantity=).save()
-        '''
+        for i in range(len(user_name_list)):
+            auth_user = get_user_model().objects.filter(username=user_name_list[i])
+            total_amount = 0
 
+            for j in range(len(basic_account_number_list)):
+                if basic_account_number_list[j] == asset_account_number_list[i]:
+                    total_amount = total_amount_list[j]
 
+            account = Account.objects.filter(account_number=asset_account_number_list[i])
+            if account.exists():
+                continue
+            else:
+                Account(account_number=asset_account_number_list[i]
+                        , account_name=account_name_list[i]
+                        , brokerage=brokerage_list[i]
+                        , total_amount=total_amount
+                        , user=auth_user[0]).save()
+        '''
+        # 4. Asset 테이블
+            - Account에서 id 참조 
+            - AssetGroup에서 id 참조
+        '''
+        for i in range(len(asset_account_number_list)):
+            account = Account.objects.get(account_number=asset_account_number_list[i])
+            assetGroup = AssetGroup.objects.get(isin=asset_isin_list[i])
+
+            asset = Asset.objects.filter(account_id=account.id, group_id=assetGroup.id)
+            if asset.exists():
+                continue
+            else:
+                Asset(account_id=account
+                      , group_id=assetGroup
+                      , current_price=current_price_list[i]
+                      , quantity=quantity_list[i]).save()
