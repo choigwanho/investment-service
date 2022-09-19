@@ -24,37 +24,37 @@
           - 제공된 테스트 데이터 셋을 API 에서 사용할 수 있도록 정제하여 로딩
           - ```python manage.py dataloading``` 으로 실행
 
-# ERD
+## ERD
 ```mermaid
 erDiagram
+
     User {
-				int id PK
-				string user_name
-		}
-		Account{
-				string account_number PK
-				string account_name
-				string brokerage
-        int invest_amount
-				string user FK
-    }		
-
-		AssetGroup {
-        string isin PK
-				string asset_name
-        string group_name
-    }
-
-		AccountAsset{
-				string account Fk
-        string group FK
-        int current_price
-				int quantity
+            int id PK
+            string user_name
     }
     
-		
+    Account{
+            string account_number PK
+            string account_name
+            string brokerage
+            int invest_amount
+            string user FK
+    }		
 
-		User ||--|{ Account: contains
-		Account ||--|{ AccountAsset: contains
-    AccountAsset ||--|| AssetGroup : contains
+    AssetGroup {
+            string isin PK
+            string asset_name
+            string group_name
+    }
+
+    Asset{
+            string account Fk
+            string group FK
+            int current_price
+            int quantity  
+    }
+    
+    User ||--|{ Account: contains
+    Account ||--|{ Asset: contains
+    Asset ||--|| AssetGroup : contains
 ```
