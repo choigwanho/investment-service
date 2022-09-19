@@ -65,4 +65,13 @@ class Asset(models.Model):
         return f'{self.account_id} {self.group_id}'
 
 
+# class Transfer(models.Model):
+#     """
+#     입금 거래 정보 테이블
+#     """
+#     account_number
+#     username
+#     transfer_ammount
+
+
 

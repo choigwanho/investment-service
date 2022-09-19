@@ -38,7 +38,8 @@ class AccountAssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ["account_name",
+        fields = ["id",
+                  "account_name",
                   "brokerage",
                   "account_number",
                   "total_amount",
@@ -60,6 +61,7 @@ class AccountAssetSerializer(serializers.ModelSerializer):
     def get_roi(self, obj):
         return_of_invest = (self.get_total_benefit(obj)/obj.invest_amount)*100
         return round(return_of_invest, 2)
+
 
 class UserAccountSerializer(serializers.ModelSerializer):
     accounts = AccountAssetSerializer(many=True, read_only=True)
