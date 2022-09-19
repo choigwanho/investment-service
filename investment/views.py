@@ -6,35 +6,42 @@ from investment.models import Account, Asset, AssetGroup
 from investment.serializers import UserAccountSerializer, AccountAssetSerializer, AssetSerializer, AssetGroupSerializer
 from django.contrib.auth import get_user_model
 
+from django.shortcuts import get_object_or_404
 
 @api_view(['GET'])
 def accountView(request, pk):
     '''
     투자 화면 조회
+        - 사용자 id로 사용자의 계좌정보 조회
     '''
-    user = get_user_model().objects.get(id=pk)
+    user = get_object_or_404(get_user_model(), id=pk)
     serializer = UserAccountSerializer(user, many=False)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def accountAssetView(request, pk):
     '''
     투자 상세 화면 조회
+        - 계좌 id로 계좌 투자 정보 및 투자 상세 조회
     '''
-    account = Account.objects.get(id=pk)
+    account = get_object_or_404(Account, id=pk)
     serializer = AccountAssetSerializer(account, many=False)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def assetGroupView(request, fk):
+def assetView(request, fk):
     '''
     보유 종목 화면 조회
+        - 계좌 id로 보유 종목 정보 조회
     '''
     assets = Asset.objects.filter(account=fk)
-    serializer = AssetSerializer(assets, many=True)
-    return Response(serializer.data)
+    if assets.exists():
+        serializer = AssetSerializer(assets, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({'message': '보유종목이 없습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
