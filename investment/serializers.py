@@ -1,6 +1,14 @@
 from rest_framework import serializers
-from investment.models import Account, Asset, AssetGroup
+from investment.models import Account, Asset, AssetGroup, Transfer
 from django.contrib.auth import get_user_model
+
+
+class TransferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transfer
+        fields = ["account_number",
+                  "user_name",
+                  "transfer_amount"]
 
 
 class AssetGroupSerializer(serializers.ModelSerializer):
@@ -55,8 +63,8 @@ class AccountAssetSerializer(serializers.ModelSerializer):
         return amount
 
     def get_total_benefit(self, obj):
-        benfit = self.get_total_amount(obj) - obj.invest_amount
-        return benfit
+        benefit = self.get_total_amount(obj) - obj.invest_amount
+        return benefit
 
     def get_roi(self, obj):
         return_of_invest = (self.get_total_benefit(obj)/obj.invest_amount)*100
