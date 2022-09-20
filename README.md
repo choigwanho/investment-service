@@ -115,15 +115,15 @@ erDiagram
 | POST            | /transfer-amount-1/                  | 투자금 입금 Phase 1  |
 | POST            | /transfer-amount-2/                  | 투자금 입금 Phase 2  |
 
--[X] 투자 화면 조회
+- [X] 투자 화면 조회
   - 로그인 한 회원의 id로 투자 화면 데이터를 조회합니다.
--[X] 투자 상세 화면 조회
+- [X] 투자 상세 화면 조회
   - 로그인 한 회원의 계좌 id로 투자 상세 화면 데이터를 조회합니다.
--[X] 보유 종목 화면 조회
+- [X] 보유 종목 화면 조회
   - 계좌 id로 보유 종목 화면 데이터를 조회합니다.
--[X] 투자금 입금 Phase 1
+- [X] 투자금 입금 Phase 1
   - 요청 데이터로 사용자 및 계좌를 검증하고 입금 거래 정보를 DB에 저장하며 거래 id를 응답합니다.
--[X] 투자금 입금 Phase 2
+- [X] 투자금 입금 Phase 2
   - 요청 데이터로 사용자 및 거래 정보를 검증하고 고객의 총 자산을 업데이트하며 자산 업데이트 상태를 응답합니다. 
 
 **추가**
@@ -138,7 +138,7 @@ erDiagram
 | GET, PUT, Patch | /rest-auth/user/                     | 사용자 조회           |
 | POST            | /rest-auth/registration/             | 회원가입             |
 | POST            | /rest-auth/registration/verify-email | 이메일 인증           |
--[X] 로그인, 로그아웃, 회원가입 등
+- [X] 로그인, 로그아웃, 회원가입 등
   - django-rest-auth 라이브러리를 사용하였습니다.
 
 
