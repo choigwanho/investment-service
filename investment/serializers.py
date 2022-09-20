@@ -77,3 +77,9 @@ class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["username", "accounts"]
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = "__all__"

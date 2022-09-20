@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from investment.models import Account, Asset, Transfer
-from investment.serializers import UserAccountSerializer, AccountAssetSerializer, AssetSerializer, TransferSerializer
+from investment.serializers import UserAccountSerializer, AccountAssetSerializer, AssetSerializer, TransferSerializer, AccountSerializer
 from django.contrib.auth import get_user_model
 
 from django.shortcuts import get_object_or_404
@@ -122,19 +122,27 @@ def transfer_amount_2(request):
 
     transfer_hash = hashlib.sha3_512(transfer_info_str.encode('utf-8')).hexdigest()
 
-    print(transfer_hash)
-    if signature == transfer_hash: # hash 값이 맞으면
+    # hash 값 검증
+    if signature == transfer_hash:
 
-        account = Account.objects.filter(account_number=transfer.account_number)
+        account = get_object_or_404(Account, account_number=transfer.account_number)
+
+        # 투자금 업데이트
+        invest_amount = account.invest_amount + transfer.transfer_amount
+
         transfer_data = {
-            'invest_amount': account.invest_amount + transfer.transfer_amount
+            "account_number": account.account_number,
+            "account_name": account.account_name,
+            "brokerage": account.brokerage,
+            "invest_amount": invest_amount,
+            "user": account.user.id
         }
 
-        serializer = TransferSerializer(instance=account, data=transfer_data)
-        print('끝')
-        return Response(serializer.data)
-        # if serializer.is_valid():
-        #    serializer.save()
+        serializer = AccountSerializer(instance=account, data=transfer_data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
-    #return Response(serializer.data)
