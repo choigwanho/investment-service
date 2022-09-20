@@ -65,4 +65,17 @@ class Asset(models.Model):
         return f'{self.account_id} {self.group_id}'
 
 
+class Transfer(models.Model):
+     """
+     입금 거래 테이블
+     """
+     account_number = models.CharField(max_length=100)
+     user_name = models.CharField(max_length=100)
+     transfer_amount = models.IntegerField(default=0)
 
+     class Meta:
+         verbose_name = "입금 거래 정보"
+         verbose_name_plural = "입금 거래 정보"
+
+     def __str__(self):
+         return f'{self.account_number} {self.user_name} {self.transfer_amount}'
