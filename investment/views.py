@@ -114,35 +114,38 @@ def transfer_amount_2(request):
     '''
     투자금 입금 Phase 2
     '''
-    signature = request.data['signature']
-    transfer_identifier = request.data['transfer_identifier']
+    if request.user.is_authenticated:
+        signature = request.data['signature']
+        transfer_identifier = request.data['transfer_identifier']
 
-    transfer = get_object_or_404(Transfer, id=transfer_identifier)
-    transfer_info_str = f'{transfer.account_number}{transfer.user_name}{transfer.transfer_amount}'
+        transfer = get_object_or_404(Transfer, id=transfer_identifier)
+        transfer_info_str = f'{transfer.account_number}{transfer.user_name}{transfer.transfer_amount}'
 
-    transfer_hash = hashlib.sha3_512(transfer_info_str.encode('utf-8')).hexdigest()
+        transfer_hash = hashlib.sha3_512(transfer_info_str.encode('utf-8')).hexdigest()
 
-    # hash 값 검증
-    if signature == transfer_hash:
+        # hash 값 검증
+        if signature == transfer_hash:
 
-        account = get_object_or_404(Account, account_number=transfer.account_number)
+            account = get_object_or_404(Account, account_number=transfer.account_number)
 
-        # 투자금 업데이트
-        invest_amount = account.invest_amount + transfer.transfer_amount
+            # 투자금 업데이트
+            invest_amount = account.invest_amount + transfer.transfer_amount
 
-        transfer_data = {
-            "account_number": account.account_number,
-            "account_name": account.account_name,
-            "brokerage": account.brokerage,
-            "invest_amount": invest_amount,
-            "user": account.user.id
-        }
+            transfer_data = {
+                "account_number": account.account_number,
+                "account_name": account.account_name,
+                "brokerage": account.brokerage,
+                "invest_amount": invest_amount,
+                "user": account.user.id
+            }
 
-        serializer = AccountSerializer(instance=account, data=transfer_data)
+            serializer = AccountSerializer(instance=account, data=transfer_data)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message': '권한이 없습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
