@@ -33,8 +33,9 @@ erDiagram
             string user_name
     }
     
-    Account{
-            string account_number PK
+    Account {
+            int id PK
+            string account_number
             string account_name
             string brokerage
             int invest_amount
@@ -42,16 +43,25 @@ erDiagram
     }		
 
     AssetGroup {
-            string isin PK
+            int id PK
+            string isin
             string asset_name
             string group_name
     }
 
-    Asset{
+    Asset {
+            int id PK
             string account Fk
             string group FK
             int current_price
             int quantity  
+    }
+    
+    Transfer {
+            int id PK
+            string account_number
+            string user_name
+            int transfer_amount
     }
     
     User ||--|{ Account: contains
