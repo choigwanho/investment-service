@@ -119,6 +119,11 @@ def transfer_amount_2(request):
         transfer_identifier = request.data['transfer_identifier']
 
         transfer = get_object_or_404(Transfer, id=transfer_identifier)
+
+        # 사용자 검증
+        if not (request.user.username == transfer.user_name):
+            return Response({'message': '권한이 없습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+
         transfer_info_str = f'{transfer.account_number}{transfer.user_name}{transfer.transfer_amount}'
 
         transfer_hash = hashlib.sha3_512(transfer_info_str.encode('utf-8')).hexdigest()
@@ -143,7 +148,7 @@ def transfer_amount_2(request):
 
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response({'status': '입금 성공'})
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
