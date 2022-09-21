@@ -133,11 +133,15 @@ erDiagram
     git clone https://github.com/dev-choee/investment-service.git
     pip install -r requirements.txt
 
-## :rocket: 어플리케이션 실행하기
-    python manage.py runserver
+## :card_file_box: 데이터베이스 마이그레이션하기
+    python manage.py makemigrations
+    python manage.py migrate
 
 ## :card_file_box: 테스트 데이터 로딩하기
     python manage.py dataloading
+
+## :rocket: 어플리케이션 실행하기
+    python manage.py runserver
 
 ---
 # 테스트 시나리오 및 API 요청 응답 예시 

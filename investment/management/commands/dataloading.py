@@ -105,28 +105,27 @@ class Command(BaseCommand):
         account_basic_ws = account_basic_wb.active
 
         basic_account_number_col = account_basic_ws['A']
-        total_amount_col = account_basic_ws['B']
+        invest_amount_col = account_basic_ws['B']
 
         basic_account_number_list = []
-        total_amount_list = []
+        invest_amount_list = []
 
         for cell in basic_account_number_col[1:]:
             basic_account_number_list.append(cell.value)
 
-        for cell in total_amount_col[1:]:
-            total_amount_list.append(cell.value)
+        for cell in invest_amount_col[1:]:
+            invest_amount_list.append(cell.value)
         '''
         # 3. Account 테이블
             - get_user_model()에서 id 참조
-            - asset_basic_info_set.xlsx에서 total_amount 참조
         '''
         for i in range(len(user_name_list)):
             user = get_user_model().objects.filter(username=user_name_list[i])
-            total_amount = 0
+            invest_amount = 0
 
             for j in range(len(basic_account_number_list)):
                 if basic_account_number_list[j] == asset_account_number_list[i]:
-                    total_amount = total_amount_list[j]
+                    invest_amount = invest_amount_list[j]
 
             account = Account.objects.filter(account_number=asset_account_number_list[i])
             if account.exists():
@@ -135,7 +134,7 @@ class Command(BaseCommand):
                 Account(account_number=asset_account_number_list[i]
                         , account_name=account_name_list[i]
                         , brokerage=brokerage_list[i]
-                        , total_amount=total_amount
+                        , invest_amount=invest_amount
                         , user=user[0]).save()
         '''
         # 4. Asset 테이블

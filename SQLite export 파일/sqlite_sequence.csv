@@ -1,0 +1,12 @@
+#,name,seq
+1,django_migrations,26
+2,account_emailaddress,0
+3,django_admin_log,0
+4,django_content_type,18
+5,auth_permission,72
+6,auth_group,0
+7,auth_user,49
+8,django_site,1
+9,investment_assetgroup,14
+10,investment_account,50
+11,investment_asset,700
