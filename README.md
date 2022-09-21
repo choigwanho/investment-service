@@ -129,8 +129,18 @@ erDiagram
   - django-rest-auth 라이브러리를 사용하였습니다.
 
 --- 
-## :package: 설치하기
-    git clone https://github.com/dev-choee/investment-service.git
+## :package: 설치 및 개발환경 셋팅하기
+    # 설치
+    git clone https://github.com/dev-choee/investment-service.
+
+    # 가상환경 만들기 및 경로로 이동
+    C:\project>python -m venv myvenv
+    C:\project>cd myvenv/Scripts
+
+    # 가상환경 실행
+    C:\project\myvenv\Scripts>activate.bat
+
+    # 라이브러리 설치 
     pip install -r requirements.txt
 
 ## :card_file_box: 데이터베이스 마이그레이션하기
